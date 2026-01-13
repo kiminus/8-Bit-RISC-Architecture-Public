@@ -76,3 +76,13 @@ extra_css:
 
 copyright: "© 2024 Zilin Liu"
 
+nav:
+  - Home: index.md
+  - Architecture:
+      - 'Datapath & Control': architecture/datapath.md
+      - 'Instruction Set (ISA)': architecture/isa.md
+      - 'Memory Model': architecture/memory.md
+  - Verification:
+      - 'Testbench Strategy': verification/strategy.md
+      - 'Simulation Results': verification/results.md
+  - FPGA Implementation: fpga/quartus.md
