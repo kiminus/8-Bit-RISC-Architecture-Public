@@ -4,6 +4,7 @@ repo_url: https://github.com/kiminus/8-Bit-RISC-Architecture-Public
 
 theme:
   name: material
+  custom_dir: overrides
   palette:
     primary: indigo
     accent: indigo
@@ -51,6 +52,8 @@ extra:
   social:
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/zilin-l-17b71022b/
+    - icon: fontawesome/brands/github
+      link: https://github.com/kiminus
   meta:
     - name: robots
       content: "noindex, nofollow"
@@ -71,5 +74,5 @@ extra_css:
   - https://unpkg.com/katex@0/dist/katex.min.css
   - https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css
 
-copyright: "© 2021 Zilin Liu"
+copyright: "© 2024 Zilin Liu"
 
