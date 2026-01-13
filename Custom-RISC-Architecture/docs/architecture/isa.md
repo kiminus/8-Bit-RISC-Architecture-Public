@@ -1,29 +1,39 @@
 # Instruction Set Architecture (ISA)
 
-The processor utilizes a custom 9-bit ISA designed for high code density.
+- 9 bits instruction width
+    - 2 bits for Type
+    - 4 bits for Opcode
+    - 3 bits for Operands (registers or immediate values)
+
+therefore, this architecture supports 0-15 for immediate value, R0-R15 registers (registers are 8 bits wide).
+
 It supports **R-Type** (Register), **I-Type** (Immediate), and **J-Type** (Jump) formats.
 
-## opcode Map
+## Opcode Map
 
-| Mnemonic      | Opcode   | Type | Description                  | Hardware Implementation                                  |
-| :------------ | :------- | :--- | :--------------------------- | :------------------------------------------------------- |
-| **AND** | `0000` | R    | `R0 = R0 & Rx` | [cite: 125]                                              |
-| **OR**  | `0001` | R    | `R0 = R0                     | Rx`                                                      |
-| **ADD** | `0010` | R    | `R0 = R0 + Rx` | [cite: 128]                                              |
-| **SUB** | `0011` | R    | `R0 = R0 - Rx` | [cite: 129]                                              |
-| **LDR** | `0100` | R    | `R0 = Mem[Rx]`             | Load from Data Memory [cite: 131]                        |
-| **STR** | `0101` | R    | `Mem[Rx] = R0`             | Store to Data Memory [cite: 137]                         |
-| **NOT** | `0110` | R    | `Wd = ~Rx`                 | Bitwise NOT [cite: 140]                                  |
-| **MOV** | `0111` | R    | `Rx = R0`                  | Move R0 to Register (via ALU_OR) [cite: 141]             |
-| **LSL** | `1010` | R    | `R0 = R0 << Rx`            | Logical Shift Left [cite: 145]                           |
-| **RSL** | `1011` | R    | `R0 = R0 >> Rx`            | Logical Shift Right [cite: 146]                          |
-
-## Control Flow (The "JLUT" Mechanism)
-
-Conventional RISC architectures use PC-relative offsets. To compress 16-bit addressing into 9-bit instructions, this core uses a **Jump Look-Up Table (JLUT)**.
-
-| Instruction                 | Code       | Description                          | Logic                                                           |
-| :-------------------------- | :--------- | :----------------------------------- | :-------------------------------------------------------------- |
-| **BE** (Branch Equal) | `J-Type` | Skip next instr if `R0 == Operand` | `PC = (Cond) ? PC+2 : PC+1` [cite: 191]                       |
-| **BL** (Branch Less)  | `J-Type` | Skip next instr if `R0 < Operand`  | `ALU_Condition_True` check [cite: 156]                         |
-| **JUMP**              | `J-Type` | `PC = JLUT[Ptr]`                   | Indirect 16-bit targeting via 5-bit ptr [cite: 157]            |
+| NAME  | TYPE | BIT BREAKDOWN    | EXAMPLE                                      | NOTES                                                                                                                                                                                                      |
+| ----- | ---- | ---------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AND   | R    | `0_0000_XXXX`    | `AND R1` → `0_0000_0001` → `R0 = R0 & R1`   | Performs a logical bitwise and on R0 and the inputted operand register and puts the result in R0                                                                                                           |
+| OR    | R    | `0_0001_XXXX`    | `OR R5` → `0_0001_0101` → `R0 = R0 \| R5`   | Performs a logical bitwise or on R0 and the inputted operand register and puts the result in R0                                                                                                            |
+| ADD   | R    | `0_0010_XXXX`    | `ADD R3` → `0_0010_0011` → `R0 = R0 + R3`   | Adds value in R0 and value in inputted operand register and puts the result into R0                                                                                                                        |
+| SUB   | R    | `0_0011_XXXX`    | `SUB R8` → `0_0011_1000` → `R0 = R0 - R8`   | Subtracts value in R0 from the value in inputted operand register and puts the result into R0                                                                                                              |
+| LOAD  | R    | `0_0100_XXXX`    | `LOAD R6` → `0_0100_0110` → `R0 = MEM[R6]`  | Loads the memory that is in the specified operand register into R0                                                                                                                                         |
+| STORE | R    | `0_0101_XXXX`    | `STORE R2` → `0_0101_0010` → `MEM[R2] = R0` | Store the results of what is in R0 into the memory of the inputted operand register                                                                                                                        |
+| NOT   | R    | `0_0110_XXXX`    | `NOT R9` → `0_0110_1001` → `R9 = ~R9`       | Performs a logical bitwise not on the inputted operand register and puts the result in R0                                                                                                                  |
+| MOV   | R    | `0_0111_XXXX`    | `MOV R2` → `0_0111_0010` → `R2 = R0`        | Puts the value of R0 into the passed in register operand                                                                                                                                                   |
+| SET   | R    | `0_1000_XXXX`    | `SET R1` → `R1 = 0xFF`                       | set the value of R1 = 1111 1111                                                                                                                                                                            |
+| RESET | R    | `0_1001_XXXX`    | `RESET R1` → `R1 = 0x00`                     | reset the value of R1 = 0000 0000                                                                                                                                                                          |
+| LSL   | R    | `0_1010_XXXX`    | `LSL R1` → `R0 = R0 << R1`                   | left shift by value of R1                                                                                                                                                                                  |
+| RSL   | R    | `0_1011_XXXX`    | `RSL R1` → `R0 = R0 >> R1`                   | right shift by value of R1                                                                                                                                                                                 |
+| ADDI  | I    | `11_000_XXXX`    | `ADDI 4` → `11_000_0100` → `R0 = R0 + 4`    | Performs add on value in register R0 and the immediate that is passed in and puts it into R0                                                                                                               |
+| SUBI  | I    | `11_001_XXXX`    | `SUBI 2` → `11_001_0010` → `R0 = R0 - 2`    | Performs sub on value in register R0 and the immediate that is passed in and puts it into R0                                                                                                               |
+| ANDI  | I    | `11_010_XXXX`    | `ANDI 5` → `11_010_0101` → `R0 = R0 & 5`    | Performs a logical bitwise and on R0 and the inputted operand immediate and puts the result in R0                                                                                                          |
+| ORI   | I    | `11_011_XXXX`    | `ORI 6` → `11_011_0110` → `R0 = R0 \| 6`    | Performs a logical bitwise or on R0 and the inputted operand immediate and puts the result in R0                                                                                                           |
+| MOVI  | I    | `11_100_XXXX`    | `MOVI 3` → `R0[3:0] = 3`                     | set the lower 4 bits of R0 to the immediate value, preserve upper 4 bits                                                                                                                                   |
+| LSLI  | I    | `11_101_XXXX`    | `LSLI 7` → `11_101_0111` → `R0 <<= 7`       | Performs a logical left shift on R0 by a specified immediate amount and puts that value into R0                                                                                                            |
+| RSLI  | I    | `11_110_XXXX`    | `RSLI 2` → `11_110_0010` → `R0 >>= 2`       | Performs a logical right shift on R0 by a specified immediate amount and puts that value into R0                                                                                                           |
+| DONE  | I    | `11_111_1111`    | `DONE` → `11_111_1111`                       | Uses this instruction to indicate the end of assembly program                                                                                                                                              |
+| BE    | J    | `10_00_X_XXXX`   | `BE R10` → `10_00_01010`                     | Branch if equal: if R0 == operand, PC += 2, else PC += 1                                                                                                                                                  |
+| BG    | J    | `10_01_X_XXXX`   | `BG Rx` → Skip next if R0 > operand          | if true, PC += 2, if false, PC += 1                                                                                                                                                                       |
+| BL    | J    | `10_10_X_XXXX`   | `BL Rx` → Skip next if R0 < operand          | if true, PC += 2, if false, PC += 1                                                                                                                                                                       |
+| J     | J    | `10_11_XXXXX`    | `J #location` → `10_11_10100`                | Performs a jump using JLUT: PC = JLUT[5-bit immediate]                                                                                                                                                    |

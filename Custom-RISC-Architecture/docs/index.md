@@ -4,7 +4,7 @@
 
 ## Project Overview
 
-This project involves the architecture, design, and verification of a custom **Single-Cycle RISC Processor**. Designed from scratch in **SystemVerilog**, the core utilizes an **Accumulator-based architecture** to minimize instruction width to 9 bits while maintaining a 16-bit addressable memory space.
+This project involves the architecture, design, and verification of a custom **Single-Cycle RISC Processor**. Designed from scratch in **SystemVerilog**, the core utilizes an **Accumulator-based architecture** to minimize instruction width to 9 bits while maintaining a 16-bit addressable memory space. Designed from python -> C++ -> SystemVerilog.
 
 ## Key Features
 
