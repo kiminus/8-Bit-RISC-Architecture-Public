@@ -2,6 +2,82 @@
 
 The architecture is built around a centralized bus connecting the Control Unit, Register File, and ALU.
 
+### Overview of the Datapath:
+```mermaid
+graph TD
+    %%--- Styling ---
+    classDef central fill:#f9f,stroke:#333,stroke-width:2px,color:black,font-weight:bold;
+    classDef component fill:#e1f5fe,stroke:#0277bd,stroke-width:1px,color:black;
+    classDef external fill:#fff3e0,stroke:#ef6c00,stroke-dasharray: 5 5,color:black;
+
+    %%--- External Inputs/Outputs ---
+    subgraph External Inputs
+        CLK(clk)
+        START(start)
+        RESET(reset)
+    end
+    DONE(done):::external
+
+    %%--- Center Component ---
+    TOP[TOP LEVEL<br/>Central Glue / Bus / Clock Coord]:::central
+
+    %%--- Left Side Components ---
+    subgraph memory controllers
+        JLUT[JLUT<br/>Jump Look Up Table]:::component
+        MEM3[(External Memory)]:::external
+        RF[RegFile<br/>Register File]:::component
+        MEM2[(External Memory)]:::external
+        IROM[InstROM<br/>Instruction ROM]:::component
+        MEM1[(External Memory)]:::external
+    end
+
+    %%--- Right Side Components ---
+    subgraph functional units
+        PC[PC<br/>Program Counter]:::component
+        ALU[ALU<br/>Arithmetic Logic Unit]:::component
+        CTRL[CTRL<br/>Control Decoder]:::component
+    end
+
+    %%--- Connections ---
+
+    %% External to TOP
+    CLK & START & RESET --> TOP
+    TOP --> DONE
+
+    %% PC connections
+    TOP -- "..." --> PC
+    PC -- PC value --> TOP
+
+    %% JLUT connections
+    TOP -- "..." --> JLUT
+    JLUT -- jump address --> TOP
+    JLUT <--> MEM3
+
+    %% RegFile connections
+    TOP -- "..." --> RF
+    RF -- RdatA, RdatB --> TOP
+    RF <--> MEM2
+
+    %% InstROM connections
+    TOP -- "..." --> IROM
+    IROM <--> MEM1
+    IROM -- mach_code --> TOP
+
+    %% ALU connections
+    TOP -- "..." --> ALU
+    ALU -- result --> TOP
+    ALU -- "flags (zero, parity, carry, condition)" --> TOP
+
+    %% CTRL connections
+    TOP -- "..." --> CTRL
+    CTRL -- control signals --> TOP
+
+    %%--- Layout hints to force side-by-side ---
+    PC ~~~ IROM
+    JLUT ~~~ ALU
+    RF ~~~ CTRL
+```
+
 ## Top-Level Connections
 
 The `TopLevel` module coordinates the data flow between the Instruction ROM (`InstROM`) and the execution units.
