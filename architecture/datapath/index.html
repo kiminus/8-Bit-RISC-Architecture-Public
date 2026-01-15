@@ -1,0 +1,1084 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://kiminus.github.io/8-Bit-RISC-Architecture-Public/architecture/datapath/">
+      
+      
+        <link rel="prev" href="../..">
+      
+      
+        <link rel="next" href="../isa/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Datapath & Control - Custom RISC Architecture Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0/dist/katex.min.css">
+    
+      <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  <meta name="robots" content="noindex, nofollow">
+
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#datapath-components" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Custom RISC Architecture Documentation" class="md-header__button md-logo" aria-label="Custom RISC Architecture Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Custom RISC Architecture Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Datapath & Control
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kiminus/8-Bit-RISC-Architecture-Public" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Custom RISC Architecture Documentation" class="md-nav__button md-logo" aria-label="Custom RISC Architecture Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Custom RISC Architecture Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kiminus/8-Bit-RISC-Architecture-Public" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Datapath & Control
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Datapath & Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview-of-the-datapath" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview of the Datapath:
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#top-level-connections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Top-Level Connections
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Top-Level Connections">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Components:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-path-0_0000_0001-and-r1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Path 0_0000_0001 (AND R1):
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-path-10_00_0_1010-be-r10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Path 10_00_0_1010 (BE R10):
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-path-0_0101_0010-store-to-mem2-or-mem2-r0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Path 0_0101_0010 (STORE to Mem[2], or Mem[2] = R0):
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quartus-synthesis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quartus Synthesis:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../isa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instruction Set (ISA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../memory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memory Model
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Verification
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Verification
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../verification/strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testbench Strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../verification/results/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Simulation Results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../fpga/quartus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FPGA Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="datapath-components">Datapath &amp; Components</h1>
+<p>The architecture is built around a centralized bus connecting the Control Unit, Register File, and ALU.</p>
+<h3 id="overview-of-the-datapath">Overview of the Datapath:</h3>
+<pre class="mermaid"><code>graph TD
+    %%--- Styling ---
+    classDef central fill:#f9f,stroke:#333,stroke-width:2px,color:black,font-weight:bold;
+    classDef component fill:#e1f5fe,stroke:#0277bd,stroke-width:1px,color:black;
+    classDef external fill:#fff3e0,stroke:#ef6c00,stroke-dasharray: 5 5,color:black;
+
+    %%--- External Inputs/Outputs ---
+    subgraph External Inputs
+        CLK(clk)
+        START(start)
+        RESET(reset)
+    end
+    DONE(done):::external
+
+    %%--- Center Component ---
+    TOP[TOP LEVEL&lt;br/&gt;Central Glue / Bus / Clock Coord]:::central
+
+    %%--- Left Side Components ---
+    subgraph memory controllers
+        JLUT[JLUT&lt;br/&gt;Jump Look Up Table]:::component
+        MEM3[(External Memory)]:::external
+        RF[RegFile&lt;br/&gt;Register File]:::component
+        MEM2[(External Memory)]:::external
+        IROM[InstROM&lt;br/&gt;Instruction ROM]:::component
+        MEM1[(External Memory)]:::external
+    end
+
+    %%--- Right Side Components ---
+    subgraph functional units
+        PC[PC&lt;br/&gt;Program Counter]:::component
+        ALU[ALU&lt;br/&gt;Arithmetic Logic Unit]:::component
+        CTRL[CTRL&lt;br/&gt;Control Decoder]:::component
+    end
+
+    %%--- Connections ---
+
+    %% External to TOP
+    CLK &amp; START &amp; RESET --&gt; TOP
+    TOP --&gt; DONE
+
+    %% PC connections
+    TOP -- "..." --&gt; PC
+    PC -- PC value --&gt; TOP
+
+    %% JLUT connections
+    TOP -- "..." --&gt; JLUT
+    JLUT -- jump address --&gt; TOP
+    JLUT &lt;--&gt; MEM3
+
+    %% RegFile connections
+    TOP -- "..." --&gt; RF
+    RF -- RdatA, RdatB --&gt; TOP
+    RF &lt;--&gt; MEM2
+
+    %% InstROM connections
+    TOP -- "..." --&gt; IROM
+    IROM &lt;--&gt; MEM1
+    IROM -- mach_code --&gt; TOP
+
+    %% ALU connections
+    TOP -- "..." --&gt; ALU
+    ALU -- result --&gt; TOP
+    ALU -- "flags (zero, parity, carry, condition)" --&gt; TOP
+
+    %% CTRL connections
+    TOP -- "..." --&gt; CTRL
+    CTRL -- control signals --&gt; TOP
+
+    %%--- Layout hints to force side-by-side ---
+    PC ~~~ IROM
+    JLUT ~~~ ALU
+    RF ~~~ CTRL</code></pre>
+<h2 id="top-level-connections">Top-Level Connections</h2>
+<p>The <code>TopLevel</code> module coordinates the data flow between the Instruction ROM (<code>InstROM</code>) and the execution units.</p>
+<ul>
+<li><strong>Program Counter (PC):</strong> Drives the address for the Instruction ROM.</li>
+<li><strong>Instruction ROM:</strong> Outputs the 9-bit <code>mach_code</code> based on the PC.</li>
+<li><strong>Control Decoder:</strong> Decodes the <code>mach_code</code> into control signals for the ALU and Memory.</li>
+<li><strong>ALU:</strong> Executes arithmetic and logic operations based on the control signals and operands from the Register File.</li>
+<li><strong>Register File:</strong> Provides the source operands for the ALU and receives results to be stored back.</li>
+<li><strong>Jump Look-Up Table (JLUT):</strong> Provides target addresses for jump instructions, accessed by the Control Unit when needed.</li>
+<li><strong>Data RAM:</strong> Stores data for load/store operations and intermediate results.</li>
+<li><strong>MUX:</strong> Selects between different data sources based on control signals.</li>
+</ul>
+<h3 id="basic-components">Basic Components:</h3>
+<pre class="mermaid"><code>sequenceDiagram
+    autonumber
+
+    participant CTRL as Control Decoder
+    participant DM as Data Memory
+    participant RF as RegFile
+    participant ALU
+    participant JLUT
+    participant PC as Program Counter
+    participant IROM as Instruction ROM</code></pre>
+<h3 id="data-path-0_0000_0001-and-r1">Data Path <code>0_0000_0001</code> (AND R1):</h3>
+<p>Control Decoder first decodes the <code>mach_code</code> from the Instruction ROM, which is <code>0_0000_0001</code> for the <code>AND R1</code> instruction. It decodes the <code>ALUop</code> (the ALU operation code), sends it to the ALU; and the <code>Ra</code> address (R1 in this case), sends it to the Register File to read the value of R1; <code>WenR</code> (write enable for the Register File) is set to 1, indicating that the result from the ALU should be written back to the Register File.</p>
+<p>Register File reads the value of R1 from its internal register array and sends it to the ALU as <code>RdatA</code>. Similarly, it reads the value of R0 (the accumulator) and sends it to the ALU as <code>RdatB</code>.</p>
+<p>The ALU performs the AND operation between <code>RdatA</code> (value of R1) and <code>RdatB</code> (value of R0, the accumulator), and sends the <code>result</code> back to the Register File to be stored in R0 (muxed); and output the <code>ALU_COND</code> (branch condition met) flag to 0 to the Program Counter to indicate that the next instruction should be executed sequentially. </p>
+<p>The Register File takes the <code>result</code> as the data to be written back to R0, and updates its internal register array accordingly (since <code>WenR</code> is set to 1). </p>
+<p>The Program controller, since the <code>ALU_COND</code> flag is 0, increments the <code>PC</code> by 1 to point to the next instruction in the Instruction ROM for the next cycle.</p>
+<p>The <code>mach_code</code> for the next instruction is fetched from the Instruction ROM based on the updated <code>PC</code>, and the process repeats for the next instruction.</p>
+<pre class="mermaid"><code>sequenceDiagram
+    autonumber
+
+    %% Participants in your requested order
+    participant CTRL as Control Decoder
+    participant DM as Data Memory
+    participant RF as RegFile
+    participant ALU
+    participant JLUT
+    participant PC as Program Counter
+    participant IROM as Instruction ROM
+
+    Note over CTRL, IROM: Start of Cycle: Fetch &amp; Decode (AND R1)
+
+    IROM-&gt;&gt;CTRL: mach_code (0_0000_0001)
+
+    Note right of CTRL: Decodes ALUop (AND),&lt;br/&gt;Target R1, and WenR=1
+
+    CTRL-&gt;&gt;ALU: ALUop (AND)
+    CTRL-&gt;&gt;RF: Ra (R0), Rb (R1), WenR (1)
+
+    Note over RF, ALU: Operand Fetch
+    RF-&gt;&gt;ALU: RdatA (Value of R0/accumulator)
+    RF-&gt;&gt;ALU: RdatB (Value of R1) MUXED with Immediate
+
+    Note over ALU: Execute AND Operation
+    ALU-&gt;&gt;RF: Result (R0 &amp; R1), MUXED with DMem
+
+    Note left of RF: Writes Result into R0&lt;br/&gt;(Because WenR=1)
+
+    ALU-&gt;&gt;PC: ALU_COND (0)
+
+    Note right of PC: Branch condition not met.&lt;br/&gt;Standard Increment.
+    PC-&gt;&gt;PC: PC = PC + 1
+
+    Note over PC, IROM: Prepare Next Cycle
+    PC-&gt;&gt;IROM: Next Instruction Address</code></pre>
+<h3 id="data-path-10_00_0_1010-be-r10">Data Path <code>10_00_0_1010</code> (BE R10):</h3>
+<p>Control Decorder decodes the <code>mach_code</code> for the <code>BE R10</code> instruction, which is <code>10_00_0_1010</code>. It sees it is a J-type instruction, therefore, it will send <code>ALUop</code> as subtraction, and <code>Ra</code> as R0,  <code>Rb</code> as R10, <code>ALU_branch</code> as <code>00</code> (indicate equal) to the ALU, which ask ALU to perform <code>R0 - R10</code>. The <code>WenR</code> is set to 0, indicating that the result from the ALU should not be written back to the Register File.</p>
+<p>Register File reads the value of R10 from its internal register array and sends it to the ALU as <code>RdatB</code>. Similarly, it reads the value of R0 (the accumulator) and sends it to the ALU as <code>RdatA</code>.</p>
+<p>Inside the ALU, it performs the subtraction, and set internal flags accordingly. It will then based on the the <code>ALU_branch</code> input to mux the correct flag (in this case, zero flag) to output as <code>ALU_Condition</code> flag to the Program Counter. </p>
+<p>The Program Counter checks the <code>ALU_Condition</code> flag. If it is 1 (indicating that R0 == R10), it will update the <code>PC</code> to <code>PC + 2</code> to skip the next instruction. If it is 0, it will simply increment the <code>PC</code> by 1 to point to the next instruction in the Instruction ROM for the next cycle.</p>
+<p>The <code>mach_code</code> for the next instruction is fetched from the Instruction ROM based on the updated <code>PC</code>, and the process repeats for the next instruction.</p>
+<pre class="mermaid"><code>sequenceDiagram
+    autonumber
+
+    participant CTRL as Control Decoder
+    participant DM as Data Memory
+    participant RF as RegFile
+    participant ALU
+    participant JLUT
+    participant PC as Program Counter
+    participant IROM as Instruction ROM
+
+    %% 1. Fetch
+    IROM-&gt;&gt;CTRL: mach_code (10_00_0_1010)
+
+    %% 2. Decode &amp; Dispatch
+    %% CTRL tells ALU to subtract and check for equality (ALU_branch = 00)
+    CTRL-&gt;&gt;ALU: ALUop (SUB), ALU_branch (00)
+
+    %% CTRL tells RF which registers to read (Ra, Rb) and NOT to write back (WenR=0)
+    CTRL-&gt;&gt;RF: Ra (R0), Rb (R10), WenR (0)
+
+    %% 3. Operand Fetch
+    %% RF outputs the values. Note: User logic defined R10-&gt;RdatA and R0-&gt;RdatB
+    RF-&gt;&gt;ALU: RdatA (R0), RdatB (R10)
+
+    %% 4. Execution &amp; Flag Output
+    %% ALU performs subtraction (R0 - R10). If result is 0, Zero Flag is high.
+    ALU-&gt;&gt;PC: ALU_Condition (Zero Flag)
+
+    %% 5. PC Update Logic
+    %% This highlights the specific decision logic for this path
+    alt If ALU_Condition == 1 (Match)
+        PC-&gt;&gt;PC: PC = PC + 2 (Skip next)
+    else If ALU_Condition == 0 (No Match)
+        PC-&gt;&gt;PC: PC = PC + 1 (Next line)
+    end
+
+    %% 6. Prepare Next Cycle
+    PC-&gt;&gt;IROM: Next Instruction Address</code></pre>
+<h3 id="data-path-0_0101_0010-store-to-mem2-or-mem2-r0">Data Path <code>0_0101_0010</code> (STORE to Mem[2], or Mem[2] = R0):</h3>
+<p>Control Decoder decodes the <code>mach_code</code> for the <code>STORE R2</code> instruction, which is <code>0_0101_0010</code>. It will send <code>Write Enable Dmem</code> as 1 to the Data Memory, and <code>Rb</code> as R2 to the Register File to read the value of R2, <code>DMemAddr</code> as 2, indicateing that the value in R0 should be stored into memory address 2. The <code>WenR</code> is set to 0, indicating that the result from the ALU should not be written back to the Register File.</p>
+<p>Register File reads the value of R2 from its internal register array and sends it to the Data memory and ALU as <code>RdatB</code>.</p>
+<p>The Data Memory receives the <code>Write Enable Dmem</code> signal, the <code>RdatB</code> from the Register File (which is the value of R2), and the <code>DMemAddr</code> (which is 2) to perform the store operation. It writes the value of R2 into memory address 2 (non blocking).</p>
+<p>The ALU is not involved in this instruction, it will output <code>ALU_Condition</code> flag as 0 to the Program Counter to indicate that the next instruction should be executed sequentially.</p>
+<p>The Program Counter increments by 1 to point to the next instruction in the Instruction ROM for the next cycle.</p>
+<pre class="mermaid"><code>sequenceDiagram
+    autonumber
+
+    participant CTRL as Control Decoder
+    participant DM as Data Memory
+    participant RF as RegFile
+    participant ALU
+    participant JLUT
+    participant PC as Program Counter
+    participant IROM as Instruction ROM
+
+    %% 1. Fetch
+    IROM-&gt;&gt;CTRL: mach_code (0_0101_0010)
+
+    %% 2. Decode &amp; Control Signals
+    %% CTRL sets up Data Memory write
+    CTRL-&gt;&gt;DM: Write Enable Dmem (1), DMemAddr (2)
+
+    %% CTRL sets up Register Read (R2) but disables Register Write (WenR=0)
+    CTRL-&gt;&gt;RF: Rb (Addr R2), WenR (0)
+
+    %% 3. Data Transfer
+    %% RF sends value to DM (for storage) and ALU (unused connection)
+    RF-&gt;&gt;DM: RdatB (Value of R2)
+    RF-&gt;&gt;ALU: RdatB (Value of R2)
+
+    %% 4. Memory Write Action
+    Note right of DM: Writes Value of R2&lt;br/&gt;into Address 2
+
+    %% 5. ALU / PC Update
+    %% ALU is bypassed for logic, but still drives the condition line
+    ALU-&gt;&gt;PC: ALU_Condition (0)
+
+    Note right of PC: Sequential Execution
+    PC-&gt;&gt;PC: PC = PC + 1
+
+    %% 6. Prepare Next Cycle
+    PC-&gt;&gt;IROM: Next Instruction Address</code></pre>
+<h3 id="quartus-synthesis">Quartus Synthesis:</h3>
+<p><img alt="1768468440325" src="../image/datapath/1768468440325.png" /></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../.." class="md-footer__link md-footer__link--prev" aria-label="Previous: Home">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Home
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../isa/" class="md-footer__link md-footer__link--next" aria-label="Next: Instruction Set (ISA)">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Instruction Set (ISA)
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      © 2024 Zilin Liu
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/in/zilin-l-17b71022b/" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/kiminus" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://kiminus.github.io/8-Bit-RISC-Architecture-Public" target="_blank" rel="noopener" title="kiminus.github.io" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M360.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6m64.6 136.1c-12.5 12.5-12.5 32.8 0 45.3l73.4 73.4-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l96-96c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3 0zm-274.7 0c-12.5-12.5-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3l96 96c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l73.3-73.4c12.5-12.5 12.5-32.8 0-45.3z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://kiminus.github.io/Kiminus" target="_blank" rel="noopener" title="kiminus.github.io" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "content.code.select", "content.code.annotate", "content.footnote.tooltips", "navigation.footer", "navigation.top", "toc.integrate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../js/katex.js"></script>
+      
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/contrib/auto-render.min.js"></script>
+      
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+      
+        <script src="../../js/init-datatables.js"></script>
+      
+    
+  </body>
+</html>
